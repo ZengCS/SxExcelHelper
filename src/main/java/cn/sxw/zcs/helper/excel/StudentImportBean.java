@@ -1,5 +1,8 @@
 package cn.sxw.zcs.helper.excel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author ZengCS
  * @Date 2023/3/28 16:07
@@ -78,6 +81,17 @@ public class StudentImportBean {
 
     public void setNation(String nation) {
         this.nation = nation;
+    }
+
+    public List<String> getAttributes() {
+        // private String[] IMPORT_TITLES = new String[]{"学生姓名", "学籍号", "年级/班级", "性别", "民族"};
+        List<String> list = new ArrayList<>();
+        list.add(name);
+        list.add(code);
+        list.add(gradeName + classNum + "班");
+        list.add(gender);
+        list.add(nation);
+        return list;
     }
 
     @Override

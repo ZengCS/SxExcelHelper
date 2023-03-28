@@ -14,7 +14,7 @@ public class FileChooserDialog extends JFrame {
     private static final Font FONT = new Font(null, Font.PLAIN, 16);
     private static final Font FONT_S = new Font(null, Font.PLAIN, 13);
     private static final Insets INSETS = new Insets(5, 5, 5, 5);
-    private static final Dimension TV_DIMENSION = new Dimension(330, 36);
+    private static final Dimension TV_DIMENSION = new Dimension(300, 36);
     private static final Dimension BTN_DIMENSION = new Dimension(100, 33);
     private static final Color THEME_COLOR = Color.decode("#13C1C1");
 
@@ -43,12 +43,11 @@ public class FileChooserDialog extends JFrame {
     }
 
     private JTextField makeTextField(String text, Color color) {
-        JTextField jTextField = new JTextField(text, 20);
+        JTextField jTextField = new JTextField(text, color == THEME_COLOR ? 47 : 40);
         jTextField.setEditable(false);
         jTextField.setForeground(color);
         jTextField.setSelectedTextColor(Color.WHITE);
         jTextField.setFont(FONT);
-        jTextField.setPreferredSize(TV_DIMENSION);
         jTextField.setMargin(INSETS);
         return jTextField;
     }
@@ -67,26 +66,33 @@ public class FileChooserDialog extends JFrame {
         panel.setBackground(Color.WHITE);
 
         // Welcome&Version
-        panel.add(makeTextPane("\n      欢迎使用 华西心理促进文档分析助手      ", true, THEME_COLOR));
-        panel.add(makeTextPane("Ver 1.0.0 Build 2023.03.28\n", false, Color.GRAY));
+        panel.add(makeTextPane("\n欢迎使用 华西心理促进文档分析助手(Ver 1.0)\n", true, THEME_COLOR));
 
         // 文本框
         final JTextField tvInput1 = makeTextField(" 请选择信息采集表格", Color.GRAY);
         final JTextField tvInput2 = makeTextField(" 请选择平台导出表格", Color.GRAY);
-        final JTextField tvAnalysis = makeTextField(" 请点击右侧分析按钮", THEME_COLOR);
+        final JTextField tvAnalysis = makeTextField(" 请选择文件后点击'分析表格'按钮", THEME_COLOR);
 
         // 按钮组
         final JButton btnInput1 = makeButton("选择文件");
         final JButton btnInput2 = makeButton("选择文件");
         final JButton btnAnalysis = makeButton("分析表格");
+        final JButton btnReset = makeButton("重置");
         btnAnalysis.setForeground(Color.RED);
+        btnAnalysis.setEnabled(false);
 
         panel.add(tvInput1);
         panel.add(btnInput1);
         panel.add(tvInput2);
         panel.add(btnInput2);
         panel.add(tvAnalysis);
-        panel.add(btnAnalysis);
+
+        JPanel childPanel = new JPanel();
+        panel.add(childPanel);
+        childPanel.setPreferredSize(new Dimension(700, 42));
+        childPanel.add(btnAnalysis);
+        childPanel.add(btnReset);
+        childPanel.setBackground(Color.WHITE);
 
         // 创建文本面板
         panel.add(tooltips);
@@ -100,6 +106,7 @@ public class FileChooserDialog extends JFrame {
                 file1 = fileChooser.getSelectedFile();
                 lastDir = file1.getParentFile();
                 tvInput1.setText(file1.getAbsolutePath());
+                btnAnalysis.setEnabled(file1 != null && file2 != null);
             }
         });
         btnInput2.addActionListener(e -> {
@@ -109,7 +116,19 @@ public class FileChooserDialog extends JFrame {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 file2 = fileChooser.getSelectedFile();
                 tvInput2.setText(file2.getAbsolutePath());
+                btnAnalysis.setEnabled(file1 != null && file2 != null);
             }
+        });
+        btnReset.addActionListener(e -> {
+            file1 = null;
+            file2 = null;
+            tvInput1.setText(" 请选择信息采集表格");
+            tvInput2.setText(" 请选择平台导出表格");
+            tvAnalysis.setText(" 请选择文件后点击'分析表格'按钮");
+            btnAnalysis.setEnabled(false);
+            btnInput1.setEnabled(true);
+            btnInput2.setEnabled(true);
+            showTips("             ", false);
         });
         btnAnalysis.addActionListener(e -> {
             if (file1 == null) {
@@ -126,29 +145,45 @@ public class FileChooserDialog extends JFrame {
             btnInput1.setEnabled(false);
             btnInput2.setEnabled(false);
             btnAnalysis.setEnabled(false);
+            btnReset.setEnabled(false);
             new Thread(() -> {
                 try {
-                    new ExcelReader(file1);
-                } catch (Exception exception) {
-                    showTips(exception.getMessage(), true);
-                }
-                try {
-                    Thread.sleep(3000);
+                    Thread.sleep(1200);
                 } catch (Exception ex) {
                     ex.printStackTrace();
+                    btnReset.setEnabled(true);
                 }
-                tvAnalysis.setText("C:\\user\\123.excel");
 
-                showTips("\n表格处理成功!\n", false);
+                try {
+                    ExcelReader excelReader = new ExcelReader(file1, file2);
+                    File destFile = excelReader.analysis();
 
-                btnInput1.setEnabled(true);
-                btnInput2.setEnabled(true);
-                btnAnalysis.setEnabled(true);
+                    tvAnalysis.setText(destFile.getAbsolutePath());
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\n表格分析成功：");
+                    sb.append("\n****************************************************");
+                    sb.append("\n数据采集学生共：" + excelReader.stuList.size() + "人");
+                    sb.append("\n其中已完成人数：" + excelReader.completeList.size() + "人");
+                    sb.append("\n其中未完成人数：" + excelReader.unCompleteList.size() + "人");
+                    sb.append("\n\n****************************************************");
+                    sb.append("\n异常学生信息(不在数据采集范围内的学生)：");
+                    sb.append("\n异常已完成人数：" + excelReader.errorCompleteList.size() + "人");
+                    sb.append("\n异常未完成人数：" + excelReader.errorUnCompleteList.size() + "人");
+                    showTips(sb.toString(), false);
+
+                    btnInput1.setEnabled(true);
+                    btnInput2.setEnabled(true);
+                    btnAnalysis.setEnabled(true);
+                    btnReset.setEnabled(true);
+                } catch (Exception exception) {
+                    showTips(exception.getMessage(), true);
+                    btnReset.setEnabled(true);
+                }
             }).start();
         });
 
         setContentPane(panel);
-        setSize(440, 330);
+        setSize(740, 540);
         setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
