@@ -64,6 +64,24 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!--指定命令行 java -jar XXX.jar 运行程序的主类入口 -->
+                            <!--不配置就会报错-->
+                            <mainClass>cn.sxw.zcs.helper.excel.FileChooserDialog</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <!--配置含有全部依赖的jar包后缀，用于区别默认的jar包-->
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

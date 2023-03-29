@@ -18,7 +18,8 @@ public class FileChooserDialog extends JFrame {
     private static final Dimension BTN_DIMENSION = new Dimension(100, 33);
     private static final Color THEME_COLOR = Color.decode("#13C1C1");
 
-    private File lastDir = new File("/Users/zengcs/Documents/华西心理促进/");
+    //    private File lastDir = new File("/Users/zengcs/Documents/华西心理促进/");
+    private File lastDir = new File("C:\\Users\\cjelva\\Desktop\\心理测评my\\");
     private File file1 = null;
     private File file2 = null;
     private JTextPane tooltips = makeTextPane("\n             \n", true, Color.RED);
@@ -175,6 +176,7 @@ public class FileChooserDialog extends JFrame {
                     btnInput2.setEnabled(true);
                     btnAnalysis.setEnabled(true);
                     btnReset.setEnabled(true);
+                    Desktop.getDesktop().open(destFile.getParentFile());
                 } catch (Exception exception) {
                     showTips(exception.getMessage(), true);
                     btnReset.setEnabled(true);

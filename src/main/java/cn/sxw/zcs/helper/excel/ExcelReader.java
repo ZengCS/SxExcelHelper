@@ -45,18 +45,18 @@ public class ExcelReader {
         return this.mergeExcels();
     }
 
-    public static void main(String[] args) {
-        try {
-            File f1 = new File("/Users/zengcs/Documents/华西心理促进/宝石小学-信息采集模板（4-6学生）.xlsx");
-            File f2 = new File("/Users/zengcs/Documents/华西心理促进/宝石小学已完成.xls");
-            ExcelReader excelReader = new ExcelReader(f1, f2);
-            excelReader.readBaseExcel();
-            excelReader.readOutExcel();
-            File file = excelReader.mergeExcels();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        try {
+//            File f1 = new File("/Users/zengcs/Documents/华西心理促进/宝石小学-信息采集模板（4-6学生）.xlsx");
+//            File f2 = new File("/Users/zengcs/Documents/华西心理促进/宝石小学已完成.xls");
+//            ExcelReader excelReader = new ExcelReader(f1, f2);
+//            excelReader.readBaseExcel();
+//            excelReader.readOutExcel();
+//            File file = excelReader.mergeExcels();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     private XSSFCellStyle makeStyle(Workbook workbook, boolean isTitle, boolean isState) {
         XSSFCellStyle cellStyle = (XSSFCellStyle) workbook.createCellStyle();
@@ -107,7 +107,23 @@ public class ExcelReader {
             Sheet sheet = workbook.createSheet(name + "(" + counts[index] + "人)");
             // 只冻结第一行
             sheet.createFreezePane(0, 1, 0, 1);
-            sheet.setDefaultColumnWidth(25);
+            sheet.setColumnWidth(0, 256 * 20);
+            sheet.setColumnWidth(1, 256 * 30);
+            if (index == 0) {
+                sheet.setColumnWidth(2, 256 * 20);
+                sheet.setColumnWidth(3, 256 * 12);
+                sheet.setColumnWidth(4, 256 * 12);
+                sheet.setColumnWidth(5, 256 * 30);
+            } else {
+                sheet.setColumnWidth(2, 256 * 30);
+                sheet.setColumnWidth(3, 256 * 20);
+                sheet.setColumnWidth(4, 256 * 12);
+                sheet.setColumnWidth(5, 256 * 12);
+                sheet.setColumnWidth(6, 256 * 20);
+                sheet.setColumnWidth(7, 256 * 30);
+                sheet.setColumnWidth(8, 256 * 20);
+            }
+
 
             int c = 0;
             Row titleRow = sheet.createRow(0);
