@@ -223,7 +223,8 @@ public class ExcelReader {
             StudentImportBean student = new StudentImportBean();
             stuList.add(student);
 
-            student.setGradeName(row.getCell(0).getStringCellValue());
+            Cell c0 = row.getCell(0);
+            student.setGradeName(c0 != null ? c0.getStringCellValue().trim() : "");
             Cell cell1 = row.getCell(1);
             if (cell1 != null) {
                 try {
@@ -237,11 +238,14 @@ public class ExcelReader {
             if (student.getClassNum() <= 0) {
                 throw new IllegalArgumentException("文件【" + file1.getName() + "】\n中存在班级为空的错误数据~");
             }
-
-            student.setName(row.getCell(2).getStringCellValue());
-            student.setGender(row.getCell(3).getStringCellValue());
-            student.setCode(row.getCell(4).getStringCellValue());
-            student.setNation(row.getCell(5).getStringCellValue());
+            Cell c2 = row.getCell(2);
+            student.setName(c2 != null ? c2.getStringCellValue().trim() : "");
+            Cell c3 = row.getCell(3);
+            student.setGender(c3 != null ? c3.getStringCellValue().trim() : "");
+            Cell c4 = row.getCell(4);
+            student.setCode(c4 != null ? c4.getStringCellValue().trim() : "");
+            Cell c5 = row.getCell(5);
+            student.setNation(c5 != null ? c5.getStringCellValue().trim() : "");
         }
 
         fis.close();
@@ -303,31 +307,31 @@ public class ExcelReader {
     private StudentExportBean analysisRow(Row row) {
         StudentExportBean student = new StudentExportBean();
         Cell c0 = row.getCell(0);
-        student.setCode(c0 != null ? c0.getStringCellValue() : "");
+        student.setCode(c0 != null ? c0.getStringCellValue().trim() : "");
 
         Cell c1 = row.getCell(1);
-        student.setSchool(c1 != null ? c1.getStringCellValue() : "");
+        student.setSchool(c1 != null ? c1.getStringCellValue().trim() : "");
 
         Cell c2 = row.getCell(2);
-        student.setGradeClass(c2 != null ? c2.getStringCellValue() : "");
+        student.setGradeClass(c2 != null ? c2.getStringCellValue().trim() : "");
 
         Cell c3 = row.getCell(3);
-        student.setUserId(c3 != null ? c3.getStringCellValue() : "");
+        student.setUserId(c3 != null ? c3.getStringCellValue().trim() : "");
 
         Cell c4 = row.getCell(4);
-        student.setName(c4 != null ? c4.getStringCellValue() : "");
+        student.setName(c4 != null ? c4.getStringCellValue().trim() : "");
 
         Cell c5 = row.getCell(5);
-        student.setGender(c5 != null ? c5.getStringCellValue() : "");
+        student.setGender(c5 != null ? c5.getStringCellValue().trim() : "");
 
         Cell c6 = row.getCell(6);
-        student.setParentPhone(c6 != null ? c6.getStringCellValue() : "");
+        student.setParentPhone(c6 != null ? c6.getStringCellValue().trim() : "");
 
         Cell c7 = row.getCell(7);
-        student.setLastAnswerTime(c7 != null ? c7.getStringCellValue() : "");
+        student.setLastAnswerTime(c7 != null ? c7.getStringCellValue().trim() : "");
 
         Cell c8 = row.getCell(8);
-        student.setUseTime(c8 != null ? c8.getStringCellValue() : "");
+        student.setUseTime(c8 != null ? c8.getStringCellValue().trim() : "");
         return student;
     }
 }
