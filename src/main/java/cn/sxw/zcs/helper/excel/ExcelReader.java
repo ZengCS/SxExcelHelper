@@ -222,13 +222,26 @@ public class ExcelReader {
             Row row = rowIterator.next();
             StudentImportBean student = new StudentImportBean();
             stuList.add(student);
-            int c = 0;
-            student.setGradeName(row.getCell(c++).getStringCellValue());
-            student.setClassNum((int) row.getCell(c++).getNumericCellValue());
-            student.setName(row.getCell(c++).getStringCellValue());
-            student.setGender(row.getCell(c++).getStringCellValue());
-            student.setCode(row.getCell(c++).getStringCellValue());
-            student.setNation(row.getCell(c).getStringCellValue());
+
+            student.setGradeName(row.getCell(0).getStringCellValue());
+            Cell cell1 = row.getCell(1);
+            if (cell1 != null) {
+                try {
+                    student.setClassNum((int) cell1.getNumericCellValue());
+                } catch (Exception exception) {
+                    student.setClassNum(Integer.parseInt(cell1.getStringCellValue().trim()));
+                }
+            } else {
+                throw new IllegalArgumentException("文件【" + file1.getName() + "】\n中存在班级为空的错误数据~");
+            }
+            if (student.getClassNum() <= 0) {
+                throw new IllegalArgumentException("文件【" + file1.getName() + "】\n中存在班级为空的错误数据~");
+            }
+
+            student.setName(row.getCell(2).getStringCellValue());
+            student.setGender(row.getCell(3).getStringCellValue());
+            student.setCode(row.getCell(4).getStringCellValue());
+            student.setNation(row.getCell(5).getStringCellValue());
         }
 
         fis.close();
